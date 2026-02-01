@@ -1,17 +1,17 @@
 
 :root{
   /* Nord palette */
-  --nord0: #2E3440;
+  --nord0: #2E3440; /* deep slate */
   --nord1: #3B4252;
   --nord2: #434C5E;
   --nord3: #4C566A;
-  --nord4: #D8DEE9;
+  --nord4: #D8DEE9; /* light */
   --nord5: #E5E9F0;
   --nord6: #ECEFF4;
-  --nord7: #8FBCBB;
-  --nord8: #88C0D0;
-  --nord9: #81A1C1;
-  --nord10:#5E81AC;
+  --nord7: #8FBCBB; /* greenish accent */
+  --nord8: #88C0D0; /* icy blue */
+  --nord9: #81A1C1; /* blue */
+  --nord10:#5E81AC; /* dark blue */
 
   --bg: var(--nord0);
   --panel: var(--nord1);
@@ -23,6 +23,10 @@
   --ok: #86d190;
   --err: #ff9191;
   --warn: #ffd37a;
+
+  --room-big: rgba(136,192,208,0.35);   /* var(--nord8) */
+  --room-small: rgba(129,161,193,0.35); /* var(--nord9) */
+  --wc: rgba(143,188,187,0.50);         /* var(--nord7) */
 }
 
 * { box-sizing: border-box; }
@@ -195,3 +199,43 @@ input:focus, select:focus {
 
 .hint { color: var(--muted); font-size: 0.9rem; margin: 6px 0 0; }
 
+/* Pohjakartta */
+.panel-floorplan .floorplan-wrap {
+  margin-top: 6px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+}
+.floorplan-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.fp-room.big rect { fill: var(--room-big); stroke: rgba(255,255,255,0.18); stroke-width: 2; }
+.fp-room.small rect { fill: var(--room-small); stroke: rgba(255,255,255,0.18); stroke-width: 2; }
+.fp-wc rect { fill: var(--wc); stroke: rgba(255,255,255,0.18); stroke-width: 2; }
+
+.floorplan-svg text {
+  fill: var(--nord6);
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-size: 16px;
+}
+
+.floorplan-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.floorplan-legend .lg {
+  width: 18px; height: 12px; border-radius: 4px; display: inline-block; margin-right: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.lg-big { background: var(--room-big); }
+.lg-small { background: var(--room-small); }
+.lg-wc { background: var(--wc); }

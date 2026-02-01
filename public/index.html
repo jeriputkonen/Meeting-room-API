@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kokoushuoneiden varaukset</title>
 
+  <!-- Tyylit -->
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
@@ -15,12 +16,14 @@
   </header>
 
   <main class="container">
+    <!-- Huonekartta ja valinta -->
     <section class="panel">
       <h2>Huonekartta</h2>
       <div id="room-map" class="room-map" aria-label="Huonekartta"></div>
       <div id="selected-room" class="selected-room"></div>
     </section>
 
+    <!-- Varauslomake ja varauslista -->
     <section class="panel">
       <h2>Varaus</h2>
       <form id="reservation-form" class="form">
@@ -53,12 +56,88 @@
       <h3>Varaukset valitulle huoneelle</h3>
       <ul id="reservations-list" class="reservations"></ul>
     </section>
+
+    <!-- Pohjakartta-visualisointi -->
+    <section class="panel panel-floorplan">
+      <h2>Toimiston pohjakartta</h2>
+      <div class="floorplan-wrap">
+        <!-- Yksinkertainen staattinen pohjakuva (SVG), 5 isoa + 5 pientä huonetta ja 2 WC:tä -->
+        <svg class="floorplan-svg" viewBox="0 0 900 420" role="img" aria-label="Toimiston pohjakartta">
+          <!-- tausta -->
+          <rect x="0" y="0" width="900" height="420" fill="#2E3440" rx="16"/>
+
+          <!-- isot huoneet (5 kpl) -->
+          <g class="fp-room big">
+            <rect x="20"  y="20"  width="260" height="120" rx="12"/>
+            <text x="150" y="85">Tunturi</text>
+          </g>
+          <g class="fp-room big">
+            <rect x="300" y="20"  width="260" height="120" rx="12"/>
+            <text x="430" y="85">Järvi</text>
+          </g>
+          <g class="fp-room big">
+            <rect x="580" y="20"  width="300" height="120" rx="12"/>
+            <text x="730" y="85">Meri</text>
+          </g>
+          <g class="fp-room big">
+            <rect x="20"  y="160" width="420" height="110" rx="12"/>
+            <text x="230" y="225">Laakso</text>
+          </g>
+          <g class="fp-room big">
+            <rect x="460" y="160" width="420" height="110" rx="12"/>
+            <text x="670" y="225">Revontuli</text>
+          </g>
+
+          <!-- pienet huoneet (5 kpl) -->
+          <g class="fp-room small">
+            <rect x="20"  y="290" width="120" height="90" rx="10"/>
+            <text x="80" y="340">Koivu</text>
+          </g>
+          <g class="fp-room small">
+            <rect x="160" y="290" width="120" height="90" rx="10"/>
+            <text x="220" y="340">Kuusi</text>
+          </g>
+          <g class="fp-room small">
+            <rect x="300" y="290" width="120" height="90" rx="10"/>
+            <text x="360" y="340">Mänty</text>
+          </g>
+          <g class="fp-room small">
+            <rect x="440" y="290" width="120" height="90" rx="10"/>
+            <text x="500" y="340">Kallio</text>
+          </g>
+          <g class="fp-room small">
+            <rect x="580" y="290" width="120" height="90" rx="10"/>
+            <text x="640" y="340">Suo</text>
+          </g>
+
+          <!-- WC:t (2 kpl) -->
+          <g class="fp-wc">
+            <rect x="720" y="290" width="70" height="90" rx="8"/>
+            <text x="755" y="340">WC</text>
+          </g>
+          <g class="fp-wc">
+            <rect x="810" y="290" width="70" height="90" rx="8"/>
+            <text x="845" y="340">WC</text>
+          </g>
+
+          <!-- käytävä/aukio -->
+          <rect x="20" y="140" width="860" height="10" fill="rgba(216,222,233,0.15)"/>
+          <rect x="20" y="280" width="860" height="10" fill="rgba(216,222,233,0.15)"/>
+        </svg>
+      </div>
+      <div class="floorplan-legend">
+        <span class="lg lg-big"></span> Iso huone
+        <span class="lg lg-small"></span> Pieni huone
+        <span class="lg lg-wc"></span> WC
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
-    <span>Jerin Ohjelmistot Oy Kokoushuoneiden varausohjelma</span>
+    <span>Jerin Ohjelmistot Oy</span>
   </footer>
 
+  <!-- Frontend-skripti -->
   <script src="/app.js"></script>
 </body>
 </html>

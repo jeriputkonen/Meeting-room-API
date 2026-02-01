@@ -31,7 +31,7 @@ const API = {
     }),
 };
 
-// DOM refs
+// DOM
 const roomMapEl = document.getElementById('room-map');
 const roomSelectEl = document.getElementById('roomId');
 const selectedRoomEl = document.getElementById('selected-room');
@@ -47,7 +47,10 @@ function roundToStep(date, stepMinutes = 5) {
   const ms = stepMinutes * 60 * 1000;
   return new Date(Math.round(date.getTime() / ms) * ms);
 }
-
+function floorToStep(date, stepMinutes = 5) {
+  const ms = stepMinutes * 60 * 1000;
+  return new Date(Math.floor(date.getTime() / ms) * ms);
+}
 function clampToBusinessHours(date, minHour = 6, maxHour = 22) {
   const d = new Date(date);
   const clamped = new Date(d);
@@ -62,12 +65,10 @@ function clampToBusinessHours(date, minHour = 6, maxHour = 22) {
   if (clamped > endOfDay) return endOfDay;
   return clamped;
 }
-
 function inputValueToDate(value) {
   const d = new Date(value);
   return isNaN(d.getTime()) ? null : d;
 }
-
 function setInputDateValue(inputEl, date) {
   const pad = (n) => String(n).padStart(2, '0');
   const yyyy = date.getFullYear();
@@ -88,18 +89,17 @@ function formatLocal(iso) {
   const min = String(d.getMinutes()).padStart(2, '0');
   return `${dd}.${mm}.${yyyy} ${hh}:${min}`;
 }
-
 function valueToISO(dtLocalValue) {
   const d = new Date(dtLocalValue);
   if (isNaN(d.getTime())) return null;
   return d.toISOString();
 }
-
 function setMessage(text, type = '') {
   msgEl.textContent = text || '';
   msgEl.className = `form-msg ${type}`;
 }
 
+// ---------- UI renderöinti ----------
 function renderRoomSelect() {
   roomSelectEl.innerHTML = '';
   ROOMS.forEach(r => {
@@ -112,7 +112,6 @@ function renderRoomSelect() {
     roomSelectEl.value = ACTIVE_ROOM.id;
   }
 }
-
 function renderRoomMap() {
   roomMapEl.innerHTML = '';
   ROOMS.forEach(r => {
@@ -127,20 +126,17 @@ function renderRoomMap() {
     roomMapEl.appendChild(tile);
   });
 }
-
 function highlightActiveTile() {
   Array.from(roomMapEl.querySelectorAll('.room-tile')).forEach(el => {
     if (el.dataset.roomId === ACTIVE_ROOM?.id) el.classList.add('active');
     else el.classList.remove('active');
   });
 }
-
 async function loadReservations(roomId) {
   if (!roomId) return;
   const list = await API.roomReservations(roomId);
   renderReservationList(list);
 }
-
 function renderReservationList(list) {
   resListEl.innerHTML = '';
   if (!list || list.length === 0) {
@@ -185,6 +181,7 @@ function renderReservationList(list) {
   });
 }
 
+// ---------- Huoneen valinta ----------
 async function setActiveRoom(roomId) {
   ACTIVE_ROOM = ROOMS.find(r => r.id === roomId) || null;
   renderRoomSelect();
@@ -195,20 +192,22 @@ async function setActiveRoom(roomId) {
   }
 }
 
+// ---------- Oletusajat ----------
 function setDefaultDateTimes() {
   const startEl = document.getElementById('start');
   const endEl = document.getElementById('end');
 
+  // Oletus: kuluvan päivän tämänhetkinen aika, pyöristetty 5 min välein
   const now = new Date();
-  let start = new Date(now.getTime() + 10 * 60 * 1000);
-  start.setSeconds(0, 0);
-  start = roundToStep(start, 5);
+  let start = roundToStep(now, 5);
+  // Rajaa 06–22 väliin
   start = clampToBusinessHours(start, 6, 22);
 
+  // Loppu +45 min
   let end = new Date(start.getTime() + 45 * 60 * 1000);
-  end = roundToStep(end, 5);
   end = clampToBusinessHours(end, 6, 22);
 
+  // Jos end clampautui ennen starttia (esim. start myöhään illalla), nostetaan min +15 min
   if (end <= start) {
     end = new Date(start.getTime() + 15 * 60 * 1000);
     end = clampToBusinessHours(end, 6, 22);
@@ -218,6 +217,7 @@ function setDefaultDateTimes() {
   setInputDateValue(endEl, end);
 }
 
+// ---------- Lomakkeen lähetys ----------
 formEl.addEventListener('submit', async (e) => {
   e.preventDefault();
   setMessage('');
@@ -227,19 +227,30 @@ formEl.addEventListener('submit', async (e) => {
   const startLocal = document.getElementById('start').value;
   const endLocal = document.getElementById('end').value;
 
-  // Turvakerros: clamp + round ennen submit
   let startDate = inputValueToDate(startLocal);
   let endDate = inputValueToDate(endLocal);
   if (!startDate || !endDate) {
     setMessage('Tarkista päivämäärät.', 'err');
     return;
   }
+
+  // Estä menneisyys (alku vähintään nyt). Pyöristetään alas 1 minuutin tarkkuuteen vertailua varten
+  const now = new Date();
+  const nowMin = floorToStep(now, 1); // 1 min tarkkuus vertailuun
+  if (startDate < nowMin) {
+    setMessage('Alkuaika ei voi olla menneisyydessä. Valitse vähintään nykyhetki.', 'err');
+    return;
+  }
+
+  // Pehmeä rajaus 06–22 ja 5 min gridi
   startDate = roundToStep(clampToBusinessHours(startDate, 6, 22), 5);
   endDate = roundToStep(clampToBusinessHours(endDate, 6, 22), 5);
   if (endDate <= startDate) {
     endDate = new Date(startDate.getTime() + 15 * 60 * 1000);
     endDate = clampToBusinessHours(endDate, 6, 22);
   }
+
+  // Päivitä input-arvot takaisin
   setInputDateValue(document.getElementById('start'), startDate);
   setInputDateValue(document.getElementById('end'), endDate);
 
@@ -268,8 +279,9 @@ formEl.addEventListener('submit', async (e) => {
   }
 });
 
+// ---------- Init ----------
 async function init() {
-  // Aseta 5 min step
+  // Step 5 min
   const startEl = document.getElementById('start');
   const endEl = document.getElementById('end');
   startEl.setAttribute('step', '300');
@@ -280,21 +292,25 @@ async function init() {
   renderRoomMap();
   setDefaultDateTimes();
 
-  // Valitse ensimmäinen huone oletuksena
   if (ROOMS.length > 0) {
     await setActiveRoom(ROOMS[0].id);
   }
 
-  // Dropdown -> kartta (uusi)
+  // Dropdown -> kartta synkka
   roomSelectEl.addEventListener('change', async (e) => {
     const roomId = e.target.value;
     await setActiveRoom(roomId);
   });
 
-  // Live-korjaukset aikakentissä (uusi)
+  // Live-korjaukset aikakentissä (pyöristys, rajaus 06–22, ja loppu > alku)
   startEl.addEventListener('change', () => {
     let start = inputValueToDate(startEl.value);
     if (!start) return;
+
+    // Estä menneisyys lennossa
+    const now = new Date();
+    if (start < now) start = now;
+
     start = roundToStep(start, 5);
     start = clampToBusinessHours(start, 6, 22);
     setInputDateValue(startEl, start);
@@ -328,5 +344,4 @@ async function init() {
     }
   });
 }
-
 init();
