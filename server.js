@@ -38,7 +38,6 @@ function parseISO(d) {
   return isNaN(date.getTime()) ? null : date;
 }
 function isOverlap(aStart, aEnd, bStart, bEnd) {
-  // Overlap if intervals intersect: (aStart < bEnd) && (aEnd > bStart)
   return aStart < bEnd && aEnd > bStart;
 }
 
@@ -61,11 +60,9 @@ app.get('/api/rooms/:roomId/reservations', (req, res) => {
 app.post('/api/reservations', (req, res) => {
   const { roomId, startISO, endISO, title } = req.body || {};
 
-  // Validate room
   const room = rooms.find(r => r.id === roomId);
   if (!room) return res.status(400).json({ error: 'Virheellinen huone.' });
 
-  // Validate times
   const start = parseISO(startISO);
   const end = parseISO(endISO);
   if (!start || !end) {
@@ -79,7 +76,6 @@ app.post('/api/reservations', (req, res) => {
     return res.status(400).json({ error: 'Varaus ei voi sijoittua menneisyyteen.' });
   }
 
-  // Check overlap for the same room
   const roomReservations = reservations.filter(r => r.roomId === roomId);
   for (const r of roomReservations) {
     const rStart = new Date(r.startISO);
@@ -114,7 +110,6 @@ app.delete('/api/reservations/:id', (req, res) => {
   res.json({ ok: true, removed });
 });
 
-// Optional: health
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, rooms: rooms.length, reservations: reservations.length });
 });

@@ -6,13 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kokoushuoneiden varaukset</title>
 
-  <!-- Lataa CSS oikein -->
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <header class="topbar">
     <h1>Kokoushuoneet</h1>
-    <div class="subtitle">Nordic cool -varausnäkymä</div>
+    <div class="subtitle">Varausnäkymä</div>
   </header>
 
   <main class="container">
@@ -39,6 +38,7 @@
           <div>
             <label for="start">Alkaa</label>
             <input id="start" type="datetime-local" required />
+            <p class="hint">Varausaika: 06:00–22:00, 5 min välein.</p>
           </div>
           <div>
             <label for="end">Päättyy</label>
@@ -56,10 +56,9 @@
   </main>
 
   <footer class="footer">
-    <span>Demo – muistinvarainen API</span>
+    <span>Jerin Ohjelmistot Oy Kokoushuoneiden varausohjelma</span>
   </footer>
 
-  <!-- Lataa frontend-skripti oikein -->
   <script src="/app.js"></script>
 </body>
 </html>

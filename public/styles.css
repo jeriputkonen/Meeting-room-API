@@ -1,17 +1,17 @@
 
 :root{
   /* Nord palette */
-  --nord0: #2E3440; /* deep slate */
+  --nord0: #2E3440;
   --nord1: #3B4252;
   --nord2: #434C5E;
   --nord3: #4C566A;
-  --nord4: #D8DEE9; /* light */
+  --nord4: #D8DEE9;
   --nord5: #E5E9F0;
   --nord6: #ECEFF4;
-  --nord7: #8FBCBB; /* greenish accent */
-  --nord8: #88C0D0; /* icy blue */
-  --nord9: #81A1C1; /* blue */
-  --nord10:#5E81AC; /* dark blue */
+  --nord7: #8FBCBB;
+  --nord8: #88C0D0;
+  --nord9: #81A1C1;
+  --nord10:#5E81AC;
 
   --bg: var(--nord0);
   --panel: var(--nord1);
@@ -192,3 +192,6 @@ input:focus, select:focus {
   color: var(--muted);
   font-size: 0.92rem;
 }
+
+.hint { color: var(--muted); font-size: 0.9rem; margin: 6px 0 0; }
+
